@@ -10,95 +10,91 @@ import {
  } from 'reactstrap';
 
 class AddBookModal extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			modal: false,
-			title: '',
-			author: '',
-			isRead: false
-		};
+	// constructor(props) {
+	// 	super(props);
+	// 	// this.state = {
+	// 	// 	// modal: false,
+	// 	// 	title: "",
+	// 	// 	author: "",
+	// 	// 	isRead: false
+	// 	// };
+	// }
 
-		this.toggle = this.toggle.bind(this);
-	}
-
-	toggle = () => {
-    	this.setState({
-     		 modal: !this.state.modal
-    	});
-	}
-
-	//function for updateTitle
 	updateTitle = (e) => {
-		this.setState({
-			title: e.target.value
-		});
+		this.props.updateTitle(e.target.value);
 	}
 
-	//function to chageAuthor
 	updateAuthor = (e) => {
-		this.setState({
-			author: e.target.value
-		});
+		this.props.updateAuthor(e.target.value);
 	}
 
-	//function for read
 	updateStatus = (e) => {
-		this.setState({
-			isRead: e.target.checked
-		});
+		this.props.updateStatus(e.target.checked);
 	}
 
 	//function for submit
 	submit = () => {
-		this.props.addBook(this.state);
-		this.setState({
-			modal: false,
-			title: "",
-			author: "",
-			isRead: false
-		});
+		if (this.props.isUpdating) {
+			return this.props.updateBookFromModal(this.props.book);
+		}
+		this.props.addBook(this.props.book);
 	}
 
-	//function to reset
 	reset = (e) => {
-		this.setState({
-			title: "",
-			author: "",
-			isRead: false
-		});
+		if (this.props.isUpdating) {
+			return this.props.toggle(null, false);
+		}
+		this.props.reset();
 	}
 
-	//calling newbbok function forn App.js
-	addBook = () => {
-		// this.state = {};
-		this.props.addBook(this.state);
-	}
+	// calling newbook function forn App.js
+	// addBook = () => {
+	// 	 this.state = {};
+	// 	 this.props.addBook(this.state);
+		
+	// }
+
+	// static getDerivedStateFromProps(props, state) {
+	// 	console.log(props);
+	// 	return {
+	// 			title: props.selectedBook.title,
+	// 			author: props.selectedBook.author,
+	// 			isRead: props.selectedBook.isRead
+	// 		}
+	// }
 
 
 	render() {
 		return (
 			<div>
-				<Button color="danger" onClick={this.toggle}>{this.props.buttonLabel}Add Book</Button>
-		        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-		          <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+				
+		        <Modal isOpen={this.props.isOpen} toggle={this.props.toggle}>
+		          <ModalHeader toggle={this.props.toggle}>Modal title</ModalHeader>
 		          <ModalBody>
 		            <form>
 
 		            	<Label for="exampleTitle">Title</Label>
-         				<Input type="title" name="title" value={this.state.title} placeholder="Enter Title" onChange={this.updateTitle} />
+         				<Input type="title" name="title" value={this.props.book.title} placeholder="Enter Title" onChange={this.updateTitle} />
 
          				<Label for="exampleAuthor">Author</Label>
-         				<Input type="author" name="author" value={this.state.author} placeholder="Enter Author" onChange={this.updateAuthor} />
+         				<Input type="author" name="author" value={this.props.book.author} placeholder="Enter Author" onChange={this.updateAuthor} />
 
          				<FormGroup check>
 				          <Label check>
-				            <Input type="checkbox" checked={this.state.isRead} onChange={this.updateStatus}/>{' '}
+				            <Input type="checkbox" checked={this.props.book.isRead} onChange={this.updateStatus}/>{' '}
 				            Read
 				          </Label>
 				        </FormGroup>
-			            	<Button color="primary"onClick={this.submit}>Submit</Button>{' '}
-			            	<Button color="danger" onClick={this.reset}>Reset</Button>{' '}
+			            	<Button color="primary"onClick={this.submit}>
+			            		{
+			            			this.props.isUpdating ? 'Update' : 'Submit'
+			            		}
+		            		</Button>{' '}
+			            	<Button color="danger" onClick={this.reset}>
+			            		{
+			            		this.props.isUpdating ? 'Cancel' : 'Reset'
+			            		}
+		            		</Button>{' '}
 
 		            </form>
 		          </ModalBody>
